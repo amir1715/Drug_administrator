@@ -3,7 +3,6 @@
   <head></head>
   <body>
     <div id="root"></div>
-	<div id="root2"></div>
 	<script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
 	<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
@@ -27,65 +26,53 @@ function drug2dose(drug,weight){
 var index = -1;
 drugObj.drugs.find((value,i)=> {
 if (value["drugName"] == drug){
-index=i;
-}});
+index=i}});
 var msg=drugObj.drugs[index]["message"];
 var fdose=drugObj.drugs[index]["dosePerkg"]* parseFloat(weight);
 var result=`Administer ${fdose} mg of ${drug} ${msg}`;
 return(result)
-};
+};//drug2dose
+
+
+ function DoseCalculate(props){
+ var res=drug2dose(props.name,props.weight);
+    return <p>{res}</p>;
+  };
+
 
 class Drug extends React.Component {
   constructor(props) {
     super(props);
     this.state = { name: drugObj.drugs[0]["drugName"] , weight: 0 , message:''};
-	this.handleclick=this.handleclick.bind(this);
   }
 
-  //methods
- handleclick() {
- var res=drug2dose(this.state.name,this.state.weight);
+//methods  
+  drugChange=(e) =>{this.setState(prev =>({weight: prev.weight,name: e.target.value }))}; 
+  weightChange=(e) =>{this.setState({weight: e.target.value })} 
  
- this.setState({message:res});
-  };
-  drugChange=(e) =>{
-  this.setState({ name: e.target.value })
- // this.handleclick();
-  }; 
-  weightChange=(e) =>{
-  this.setState({ weight: e.target.value })
- //this.handleclick();
-  };  
  // render
   render() {
+  const weight = this.state.weight;
+  const name = this.state.name;
   var optionObj=new Array();
   for (let i = 0; i < drugObj.drugs.length; i++){
-  optionObj[i]= <option value={drugObj.drugs[i]["drugName"]}>{drugObj.drugs[i]["drugName"]}</option>
+  var newdrug=drugObj.drugs[i]["drugName"]
+  optionObj[i]= <option value={newdrug}>{newdrug}</option>
   }
 	return (
 	<div>
-	<li> Drug Name:  
-<select onChange={this.drugChange}>
-{optionObj}
-</select>
-</li>
-	<li> Weight: <input onChange={this.weightChange}></input> (kg) </li>
-	<button onClick={this.handleclick}>Calculate</button>
-	<p> {this.state.message}</p>
+	<li> Drug Name: <select onChange={this.drugChange}>{optionObj}</select></li>
+	<li> Body Weight: <input onChange={this.weightChange}></input> (kg) </li>
+	<DoseCalculate name={name} weight={weight} />
   </div>
 );
   }
 }
 
-      ReactDOM.render(
-        <Drug/>,
-        document.getElementById('root')
-      );
-	  
-	   ReactDOM.render(
-        <Drug/>,
-        document.getElementById('root2')
-      );
+ReactDOM.render(
+ <Drug/>,
+  document.getElementById('root')
+  );  
 </script>
-  </body>
+ </body>
 </html>
